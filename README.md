@@ -3,9 +3,10 @@
 语音转文字封装
 
 - 支持离线语言识别成文字
-- 支持设定环境音，超过环境音才进行识别
-- 通过使用系统 arecord/sox 提高兼容性，语音支持按秒分片处理，自动合并分片
+- 通过流式处理语音，支持限制识别时长等功能
 - 支持预设识别映射，可通过配置文件进行调整，用于提高识别精确度
+- 其他未说明功能请看 `查看帮助` 一栏
+
 
 # 环境准备
 
@@ -16,24 +17,14 @@ bash -x ./build_environment.sh
 ## 构建 whisper.cpp 服务
 
 ```bash
-cd whisper.cpp
-cmake -B build
+cmake -B build -DWHISPER_SDL2=ON -DENABLE_GDB=OFF -S whisper.cpp
 cmake --build build --config Release
 
 # 测试编译是否成功
-./build/bin/whisper-cli -m models/ggml-base.en-q5_1.bin ./samples/jfk.wav 
+./build/bin/whisper-cli -m ./whisper.cpp/models/ggml-base.en-q5_1.bin ./whisper.cpp/samples/jfk.wav 
 
 # 返回上层目录
 cd ..
-```
-
-## 编译项目
-
-```bash
-mkdir build
-cd build 
-cmake ..
-make
 ```
 
 # 修改配置
@@ -90,36 +81,33 @@ cd whisper.cpp/models/
 ./download-ggml-model.sh  base.en-q5_1
 ```
 
-使用不同模型， 修改 `start_whisper_server.sh`, 把 -m 修改为想要的模型即可。
+使用不同模型， 修改 启动参数, 把 -m 修改为想要的模型即可。
 
 ```bash
-cd whisper.cpp && ./build/bin/whisper-server --port 8090 -m models/ggml-base.en-q5_1.bin
+./build/bin/whisper-fuzzy -u ./config.json -m ./whisper.cpp/models/ggml-base.en-q5_1.bin -t 6 --step 0 --length 3000 -vth 0.6
 ```
 
-## 环境音大小
 
-在 `./src/whisper.h` 的 `SILENCE_THRESHOLD` 中可以配置环境音大小，用于区分审核时候有人说话。
+# 执行例程 `src/main.cpp -> build/whisper-fuzzy`
 
+示例程序 `src/main.cpp`
 
-# 执行例程 `src/main.cpp -> whisper`
-
-## 启动 whisper.cpp 服务
+## 查看帮助
 
 ```bash
-./start_whisper_server.sh
+./build/bin/whisper-fuzzy
 ```
 
 ## 启动 whisper 例程
 
 ```bash
-cd build
-./whisper ../config.json
+./build/bin/whisper-fuzzy -u ./config.json -m ./whisper.cpp/models/ggml-base.en-q5_1.bin -t 6 --step 0 --length 3000 -vth 0.6
 ```
 
-先说 up 过会再说 okay，会有如下日志
+先说 okey 过会再说 oh，会有如下日志
 
 ```bash
- rp5-whisper/build main SIGINT ❯ ./whisper ../config.json
+ rp5-whisper/build main SIGINT ❯ ./build/bin/whisper-fuzzy -u ./config.json -m ./whisper.cpp/models/ggml-base.en-q5_1.bin -t 6 --step 0 --length 5000 -vth 0.6
 [rp5-whisper/whisper.cpp:read_config:45] read hi -> 0x01
 [rp5-whisper/whisper.cpp:read_config:45] read up -> 0x02
 [rp5-whisper/whisper.cpp:read_config:45] read up. -> 0x02
@@ -133,29 +121,22 @@ cd build
 [rp5-whisper/whisper.cpp:read_config:45] read okay -> 0x03
 [rp5-whisper/whisper.cpp:read_config:45] read okay? -> 0x03
 [rp5-whisper/whisper.cpp:read_config:45] read okay! -> 0x03
-Task whisper is running on thread 139692007523904
-#  +                                               | 05%Maximum peak loudness (dB): -24.5799 dB
-[rp5-whisper/whisper.cpp:whisper:174] max_loudness(-24.579869) > SILENCE_THRESHOLD(-30), continue record
-[rp5-whisper/main.cpp:whisper_task:22] whisper ret: 1
-Recording WAVE '/tmp/record_1.wav' : Signed 16 bit Little Endian, Rate 16000 Hz, Mono
-#+                                                 | 00%Maximum peak loudness (dB): -49.2474 dB
-[rp5-whisper/whisper.cpp:voice_to_text:89] Text: Wow.
-[rp5-whisper/main.cpp:whisper_callback:10] [6] get code: 0x02
-[rp5-whisper/main.cpp:whisper_task:22] whisper ret: 0
-Recording WAVE '/tmp/record_0.wav' : Signed 16 bit Little Endian, Rate 16000 Hz, Mono
-#+                                                 | 00%Maximum peak loudness (dB): -48.3016 dB
-[rp5-whisper/whisper.cpp:whisper:166] max_loudness(-48.301588) <= SILENCE_THRESHOLD(-30), no voice
-[rp5-whisper/main.cpp:whisper_task:22] whisper ret: -2
-Recording WAVE '/tmp/record_0.wav' : Signed 16 bit Little Endian, Rate 16000 Hz, Mono
-#     +                                            | 11%Maximum peak loudness (dB): -18.4721 dB
-[rp5-whisper/whisper.cpp:whisper:174] max_loudness(-18.472130) > SILENCE_THRESHOLD(-30), continue record
-[rp5-whisper/main.cpp:whisper_task:22] whisper ret: 1
-Recording WAVE '/tmp/record_1.wav' : Signed 16 bit Little Endian, Rate 16000 Hz, Mono
-#+                                                 | 00%Maximum peak loudness (dB): -49.2474 dB
-[rp5-whisper/whisper.cpp:voice_to_text:89] Text: Okay.
-[rp5-whisper/main.cpp:whisper_callback:10] [13] get code: 0x03
-[rp5-whisper/main.cpp:whisper_task:22] whisper ret: 0
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:283]
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 11 START | t0 = 82625 ms | t1 = 112625 ms
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:285]
+[/main.cpp:whisper_user_callback:29] [11] get text:  Okay., code: 0x03
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:02.000 --> 00:00:29.600]   Okay.
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:327]
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 11 END
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:283]
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 12 START | t0 = 92956 ms | t1 = 122956 ms
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:285]
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:00.000 --> 00:00:20.560]   Okay.
+[/main.cpp:whisper_user_callback:29] [12] get text:  Oh., code: 0x02
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:20.560 --> 00:00:29.000]   Oh.
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:327]
+[rp5-whisper/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 12 END
 ```
 
-up 转化为了 0x02, okay 转化为 0x03
+okay 转化为 0x03, oh 转化为了 0x02
 

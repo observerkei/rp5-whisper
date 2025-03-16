@@ -4,37 +4,31 @@ function install_dep()
 {
     sudo apt update
     sudo apt upgrade
-    sudo apt-get install -y sox
     sudo apt install build-essential
-    sudo apt install -y libcurl4-openssl-dev cmake
+    sudo apt install -y cmake
+    sudo apt install -y libsdl2-dev
+}
+
+function setup_whisper_fuzzy()
+{
+    cp ./cmake/CMakeLists.txt ./whisper.cpp/
+    cp ./cmake/examples/CMakeLists.txt ./whisper.cpp/examples
 }
 
 function build_whisper_cpp() 
 {
-    cd whisper.cpp
-    cmake -B build
+    cmake -B build -DWHISPER_SDL2=ON -DENABLE_GDB=OFF -S whisper.cpp
     cmake --build build --config Release
 
-    ./build/bin/whisper-cli -m models/ggml-base.en-q5_1.bin ./samples/jfk.wav 
-    if [[ 0 -eq $? ]]; then
-        echo "test whisper.cpp err code: $?"
-        exit 1
-    fi
+    #./build/bin/whisper-cli -m ./whisper.cpp/models/ggml-base.en-q5_1.bin ./whisper.cpp/samples/jfk.wav 
+    #if [[ 0 -eq $? ]]; then
+    #    echo "test whisper.cpp err code: $?"
+    #    exit 1
+    #fi
 
-    cd ..
-}
-
-function build_whisper() 
-{
-    mkdir build
-    cd build 
-    cmake ..
-
-    make
-
-    cd ..
+    #cd ..
 }
 
 install_dep
-build_whisper
-build_whisper_cpp
+setup_whisper_fuzzy
+#build_whisper_cpp
