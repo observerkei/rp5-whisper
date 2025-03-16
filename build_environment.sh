@@ -20,15 +20,16 @@ function build_whisper_cpp()
     cmake -B build -DWHISPER_SDL2=ON -DENABLE_GDB=OFF -S whisper.cpp
     cmake --build build --config Release
 
-    #./build/bin/whisper-cli -m ./whisper.cpp/models/ggml-base.en-q5_1.bin ./whisper.cpp/samples/jfk.wav 
-    #if [[ 0 -eq $? ]]; then
-    #    echo "test whisper.cpp err code: $?"
-    #    exit 1
-    #fi
-
-    #cd ..
+    ./build/bin/whisper-cli -m ./whisper.cpp/models/ggml-base.en-q5_1.bin ./whisper.cpp/samples/jfk.wav 
+    if [[ 0 -ne $? ]]; then
+        echo "test whisper.cpp err code: $?"
+        exit 1
+    fi
 }
 
 install_dep
 setup_whisper_fuzzy
-#build_whisper_cpp
+
+if [[ x"build" == x"$1" ]]; then
+    build_whisper_cpp
+fi

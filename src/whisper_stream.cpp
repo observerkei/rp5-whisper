@@ -15,10 +15,15 @@
 #include <vector>
 #include <fstream>
 
-extern int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text);
 
-
-void whisper_print_usage(const whisper_params & params) {
+/**
+ * 打印命令行参数的使用说明。
+ *
+ * @param params 传入的 whisper_params_t 结构体，包含所有可用的命令行参数及其默认值。
+ * 
+ * 该函数用于向用户展示可用的命令行选项及其默认值，帮助用户正确配置 Whisper 运行参数。
+ */
+void whisper_print_usage(const whisper_params_t & params) {
     printf("\n");
     printf("usage: %s [options]\n", params.program_name);
     printf("\n");
@@ -30,6 +35,8 @@ void whisper_print_usage(const whisper_params & params) {
     printf("            --length N      [%-7d] audio length in milliseconds\n",                   params.length_ms);
     printf("            --keep N        [%-7d] audio to keep from previous step in ms\n",         params.keep_ms);
     printf("  -c ID,    --capture ID    [%-7d] capture device ID\n",                              params.capture_id);
+    printf("  -d N,     --debug N       [%-7d] debug flag, ERR(%d), INFO(%d), DBG(%d) \n",        get_dbg_enable(),
+        log_dbg_flag_t::LOG_ERR_FLAG, log_dbg_flag_t::LOG_INFO_FLAG, log_dbg_flag_t::LOG_DBG_FLAG);
     printf("  -mt N,    --max-tokens N  [%-7d] maximum number of tokens per audio chunk\n",       params.max_tokens);
     printf("  -ac N,    --audio-ctx N   [%-7d] audio context size (0 - all)\n",                   params.audio_ctx);
     printf("  -vth N,   --vad-thold N   [%-7.2f] voice activity detection threshold\n",           params.vad_thold);
@@ -48,17 +55,26 @@ void whisper_print_usage(const whisper_params & params) {
     printf("\n");
 }
 
+/**
+ * 运行 Whisper 语音流处理的主函数。
+ *
+ * @param whisper_fuzzy_ctx 指向 whisper_fuzzy_t 结构体的指针，包含语音处理的上下文信息。
+ * @return 成功返回 0，失败返回 -1。
+ *
+ * 该函数负责管理 Whisper 的音频流处理，调用相关的语音识别和匹配功能，
+ * 以便实时处理输入音频数据并执行模糊匹配任务。
+ */
 int whisper_stream_main(whisper_fuzzy_t *whisper_fuzzy_ctx) {
     if (!whisper_fuzzy_ctx) {
         LOG_ERR("whisper_fuzzy_ctx null");
         return -1;
     }
-    whisper_params *params_tmp = whisper_fuzzy_get_params(whisper_fuzzy_ctx);
+    whisper_params_t *params_tmp = whisper_fuzzy_get_params(whisper_fuzzy_ctx);
     if (!params_tmp) {
         LOG_ERR("fail to get params\n");
         return -1;
     }
-    whisper_params &params = *params_tmp;
+    whisper_params_t &params = *params_tmp;
 
     params.keep_ms   = std::min(params.keep_ms,   params.step_ms);
     params.length_ms = std::max(params.length_ms, params.step_ms);

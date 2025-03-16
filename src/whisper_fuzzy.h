@@ -12,7 +12,7 @@ extern "C" {
  * Whisper 结构体的前向声明。
  */
 struct whisper_fuzzy_t;
-struct whisper_params;
+struct whisper_params_t;
 
 /**
  * Whisper 回调函数类型定义。
@@ -27,9 +27,9 @@ typedef int (*whisper_callback_t)(size_t leat_count, const char *text, const cha
 /**
  * 获取解析参数
  * @param w 指向 whisper_fuzzy_t 结构体的指针。
- * @return 成功返回指向 whisper_params 结构的指针
+ * @return 成功返回指向 whisper_params_t 结构的指针
  */
-whisper_params *whisper_fuzzy_get_params(whisper_fuzzy_t *w);
+whisper_params_t *whisper_fuzzy_get_params(whisper_fuzzy_t *w);
 
 /**
  * 初始化 Whisper 组件。
@@ -56,6 +56,16 @@ void whisper_fuzzy_exit(whisper_fuzzy_t* w);
  * @return 成功返回 0，失败返回 -1。
  */
 int whisper_fuzzy(whisper_fuzzy_t* w, whisper_callback_t callback, void* userdata);
+
+/**
+ * 进行模糊匹配流程。
+ *
+ * @param w 指向 whisper_fuzzy_t 结构体的指针。
+ * @param leat_count 允许的最小匹配字符数。
+ * @param text 需要匹配的文本字符串。
+ * @return 成功返回匹配的评分值，失败返回 -1。
+ */
+int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text);
 
 
 #ifdef __cplusplus

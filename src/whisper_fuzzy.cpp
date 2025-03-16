@@ -14,24 +14,31 @@ using json = nlohmann::json;
  * Whisper 结构体，包含语音计数和映射数据。
  */
 typedef struct whisper_fuzzy_t {
-    whisper_params *params;                             ///< 输入参数
+    whisper_params_t *params;                           ///< 输入参数
     whisper_callback_t callback;                        ///< 事件回调
     void *userdata;                                     ///< 用户数据
     std::unordered_map<std::string, std::string>* map;  ///< 指向存储文本转换映射的哈希表指针。
 } whisper_fuzzy_t;
 
-
 /**
  * 获取解析参数
  * @param w 指向 whisper_fuzzy_t 结构体的指针。
- * @return 成功返回指向 whisper_params 结构的指针
+ * @return 成功返回指向 whisper_params_t 结构的指针
  */
-whisper_params *whisper_fuzzy_get_params(whisper_fuzzy_t *w)
+whisper_params_t *whisper_fuzzy_get_params(whisper_fuzzy_t *w)
 {
     return w ? w->params : nullptr;
 }
 
-static bool whisper_fuzzy_params_parse(int argc, char const* argv[], whisper_params & params) {
+/**
+ * 解析命令行参数并填充 whisper_params_t 结构体。
+ *
+ * @param argc 命令行参数的数量。
+ * @param argv 命令行参数的数组。
+ * @param params 用于存储解析后参数的 whisper_params_t 结构体。
+ * @return 解析成功返回 true，失败返回 false。
+ */
+static bool whisper_fuzzy_params_parse(int argc, char const* argv[], whisper_params_t & params) {
     params.program_name = argv[0];
     for (int i = 1; i < argc; i++) {
         std::string arg = argv[i];
@@ -45,6 +52,7 @@ static bool whisper_fuzzy_params_parse(int argc, char const* argv[], whisper_par
         else if (                  arg == "--length")        { params.length_ms     = std::stoi(argv[++i]); }
         else if (                  arg == "--keep")          { params.keep_ms       = std::stoi(argv[++i]); }
         else if (arg == "-c"    || arg == "--capture")       { params.capture_id    = std::stoi(argv[++i]); }
+        else if (arg == "-d"    || arg == "--debug")         { set_dbg_enable(log_dbg_flag_t(std::stoi(argv[++i]))); }
         else if (arg == "-mt"   || arg == "--max-tokens")    { params.max_tokens    = std::stoi(argv[++i]); }
         else if (arg == "-ac"   || arg == "--audio-ctx")     { params.audio_ctx     = std::stoi(argv[++i]); }
         else if (arg == "-vth"  || arg == "--vad-thold")     { params.vad_thold     = std::stof(argv[++i]); }
@@ -138,7 +146,6 @@ std::string str_trim(const std::string& str)
     return str.substr(start, end - start + 1);
 }
 
-
 /**
  * 将文本转换为代码。
  *
@@ -175,9 +182,9 @@ whisper_fuzzy_t* whisper_fuzzy_init(int argc, char const* argv[])
     }
     memset(w, 0, sizeof(whisper_fuzzy_t));
     
-    w->params = new whisper_params;
+    w->params = new whisper_params_t;
     if (!w->params) {
-        LOG_ERR("fail to new whisper_params");
+        LOG_ERR("fail to new whisper_params_t");
         goto _exit;
     }
     
@@ -232,7 +239,14 @@ void whisper_fuzzy_exit(whisper_fuzzy_t* w)
     free(w);
 }
 
-// 匹配流程
+/**
+ * 进行模糊匹配流程。
+ *
+ * @param w 指向 whisper_fuzzy_t 结构体的指针。
+ * @param leat_count 允许的最小匹配字符数。
+ * @param text 需要匹配的文本字符串。
+ * @return 成功返回匹配的评分值，失败返回 -1。
+ */
 int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text)
 {
     if (!text || !w || !w->callback) {
@@ -245,7 +259,6 @@ int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text)
 
     return w->callback(leat_count, text, code, w->userdata);
 }
-
 
 /**
  * 处理 Whisper 任务。
