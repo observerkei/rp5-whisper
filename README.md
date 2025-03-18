@@ -88,7 +88,7 @@ cd whisper.cpp/models/
 ```
 
 
-# 执行例程 `src/main.cpp -> build/whisper-fuzzy`
+# 执行例程 `src/main.cpp -> build/bin/whisper-fuzzy`
 
 示例程序 `src/main.cpp`
 
@@ -107,35 +107,35 @@ cd whisper.cpp/models/
 先说 okey 过会再说 oh，会有如下日志
 
 ```bash
- rp5-whisper/build main SIGINT ❯ ./build/bin/whisper-fuzzy -u ./config.json -m ./whisper.cpp/models/ggml-base.en-q5_1.bin -t 6 --step 0 --length 5000 -vth 0.6
-[rp5-whisper/whisper.cpp:read_config:45] read hi -> 0x01
-[rp5-whisper/whisper.cpp:read_config:45] read up -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read up. -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read up? -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read oh. -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read ow. -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read ah. -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read wow. -> 0x02
-[rp5-whisper/whisper.cpp:read_config:45] read how are you? -> 0x03
-[rp5-whisper/whisper.cpp:read_config:45] read okay. -> 0x03
-[rp5-whisper/whisper.cpp:read_config:45] read okay -> 0x03
-[rp5-whisper/whisper.cpp:read_config:45] read okay? -> 0x03
-[rp5-whisper/whisper.cpp:read_config:45] read okay! -> 0x03
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:283]
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 11 START | t0 = 82625 ms | t1 = 112625 ms
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:285]
+ rp5-whisper/build main SIGINT ❯ ./build/bin/whisper-fuzzy -u ./config.json -m ./whisper.cpp/models/ggml-base.en-q5_1.bin -t 6 --step 0 --length 5000 -vth 0.6 
+[/whisper.cpp:read_config:45] read hi -> 0x01
+[/whisper.cpp:read_config:45] read up -> 0x02
+[/whisper.cpp:read_config:45] read up. -> 0x02
+[/whisper.cpp:read_config:45] read up? -> 0x02
+[/whisper.cpp:read_config:45] read oh. -> 0x02
+[/whisper.cpp:read_config:45] read ow. -> 0x02
+[/whisper.cpp:read_config:45] read ah. -> 0x02
+[/whisper.cpp:read_config:45] read wow. -> 0x02
+[/whisper.cpp:read_config:45] read how are you? -> 0x03
+[/whisper.cpp:read_config:45] read okay. -> 0x03
+[/whisper.cpp:read_config:45] read okay -> 0x03
+[/whisper.cpp:read_config:45] read okay? -> 0x03
+[/whisper.cpp:read_config:45] read okay! -> 0x03
+[/whisper_stream.cpp:whisper_stream_main:283]
+[/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 11 START | t0 = 82625 ms | t1 = 112625 ms
+[/whisper_stream.cpp:whisper_stream_main:285]
 [/main.cpp:whisper_user_callback:29] [11] get text:  Okay., code: 0x03
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:02.000 --> 00:00:29.600]   Okay.
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:327]
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 11 END
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:283]
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 12 START | t0 = 92956 ms | t1 = 122956 ms
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:285]
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:00.000 --> 00:00:20.560]   Okay.
+[/whisper_stream.cpp:whisper_stream_main:313] [00:00:02.000 --> 00:00:29.600]   Okay.
+[/whisper_stream.cpp:whisper_stream_main:327]
+[/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 11 END
+[/whisper_stream.cpp:whisper_stream_main:283]
+[/whisper_stream.cpp:whisper_stream_main:284] ### Transcription 12 START | t0 = 92956 ms | t1 = 122956 ms
+[/whisper_stream.cpp:whisper_stream_main:285]
+[/whisper_stream.cpp:whisper_stream_main:313] [00:00:00.000 --> 00:00:20.560]   Okay.
 [/main.cpp:whisper_user_callback:29] [12] get text:  Oh., code: 0x02
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:313] [00:00:20.560 --> 00:00:29.000]   Oh.
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:327]
-[rp5-whisper/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 12 END
+[/whisper_stream.cpp:whisper_stream_main:313] [00:00:20.560 --> 00:00:29.000]   Oh.
+[/whisper_stream.cpp:whisper_stream_main:327]
+[/whisper_stream.cpp:whisper_stream_main:328] ### Transcription 12 END
 ```
 
 okay 转化为 0x03, oh 转化为了 0x02

@@ -175,6 +175,7 @@ const char* text_to_code(std::unordered_map<std::string, std::string>& map, cons
 whisper_fuzzy_t* whisper_fuzzy_init(int argc, char const* argv[])
 {
     int ret = 0;
+
     whisper_fuzzy_t* w = (whisper_fuzzy_t*)malloc(sizeof(whisper_fuzzy_t));
     if (!w) {
         LOG_ERR("fail to malloc whisper");
@@ -247,15 +248,15 @@ void whisper_fuzzy_exit(whisper_fuzzy_t* w)
  * @param text 需要匹配的文本字符串。
  * @return 成功返回匹配的评分值，失败返回 -1。
  */
-int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text)
+int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char* text)
 {
-    if (!text || !w || !w->callback) {
-        LOG_ERR("args fail!  text(%p), w(%p), callback(%p)", 
-            text, w, w ? w->callback : nullptr);
+    if (!text || !w || !w->callback || !w->map) {
+        LOG_ERR("args fail!  text(%p), w(%p), callback(%p), map(%p)",
+            text, w, w ? w->callback : nullptr, w ? w->map : nullptr);
         return -1;
     }
     std::string trim_text = str_trim(text);
-    const char *code = text_to_code(*w->map, trim_text.c_str());
+    const char* code = text_to_code(*w->map, trim_text.c_str());
 
     return w->callback(leat_count, text, code, w->userdata);
 }
