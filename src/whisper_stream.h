@@ -1,12 +1,12 @@
-#ifndef __WHISPER_STREAM_H__
-#define __WHISPER_STREAM_H__
+#ifndef WHISPER_STREAM_H_
+#define WHISPER_STREAM_H_
 
 #include <thread>
 #include <string>
 
-#include "stdint.h"
 #include "whisper_fuzzy.h"
 
+#include "stdint.h"
 
 /**
  * 结构体：whisper_params_t
@@ -65,4 +65,4 @@ void whisper_print_usage(const whisper_params_t & params);
  */
 int whisper_stream_main(whisper_fuzzy_t *whisper_fuzzy_ctx);
 
-#endif //__WHISPER_STREAM_H__
+#endif  // WHISPER_STREAM_H_

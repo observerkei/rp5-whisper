@@ -2,11 +2,8 @@
 //
 // A very quick-n-dirty implementation serving mainly as a proof of concept.
 //
-#include "common-sdl.h"
-#include "common.h"
-#include "whisper.h"
+
 #include "whisper_stream.h"
-#include "debug.h"
 
 #include <cassert>
 #include <cstdio>
@@ -15,6 +12,11 @@
 #include <vector>
 #include <fstream>
 
+#include "common-sdl.h"
+#include "common.h"
+#include "whisper.h"
+
+#include "debug.h"
 
 /**
  * 打印命令行参数的使用说明。

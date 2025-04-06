@@ -1,9 +1,9 @@
-#include "debug.h"
-#include "whisper_fuzzy.h"
 #include <iostream>
 #include <thread>
 #include <vector>
 
+#include "whisper_fuzzy.h"
+#include "debug.h"
 
 /**
  * Whisper 回调函数类型定义。
@@ -13,7 +13,7 @@
  * @param code 处理后的文本代码。
  * @param userdata 用户自定义数据指针。
  */
-static int whisper_user_callback(size_t leat_count, const char *text, const char* code, void* userdata)
+static int whisper_user_callback(size_t leat_count, const char* text, const char* code, void* userdata)
 {
     // skip.
     if (leat_count) {

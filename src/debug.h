@@ -1,5 +1,5 @@
-#ifndef __DEBUG_H__
-#define __DEBUG_H__
+#ifndef DEBUG_H_
+#define DEBUG_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,4 +35,4 @@ log_dbg_flag_t get_dbg_enable();
 }
 #endif
 
-#endif//__DEBUG_H__
+#endif  // DEBUG_H_

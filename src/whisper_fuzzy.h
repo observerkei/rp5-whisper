@@ -1,5 +1,5 @@
-#ifndef __WHISPER_FUZZY_H__
-#define __WHISPER_FUZZY_H__
+#ifndef WHISPER_FUZZY_H_
+#define WHISPER_FUZZY_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,14 +22,14 @@ struct whisper_params_t;
  * @param code 处理后的文本代码。
  * @param userdata 用户自定义数据指针。
  */
-typedef int (*whisper_callback_t)(size_t leat_count, const char *text, const char* code, void* userdata);
+typedef int (*whisper_callback_t)(size_t leat_count, const char* text, const char* code, void* userdata);
 
 /**
  * 获取解析参数
  * @param w 指向 whisper_fuzzy_t 结构体的指针。
  * @return 成功返回指向 whisper_params_t 结构的指针
  */
-whisper_params_t *whisper_fuzzy_get_params(whisper_fuzzy_t *w);
+whisper_params_t* whisper_fuzzy_get_params(whisper_fuzzy_t* w);
 
 /**
  * 初始化 Whisper 组件。
@@ -61,15 +61,14 @@ int whisper_fuzzy(whisper_fuzzy_t* w, whisper_callback_t callback, void* userdat
  * 进行模糊匹配流程。
  *
  * @param w 指向 whisper_fuzzy_t 结构体的指针。
- * @param leat_count 允许的最小匹配字符数。
+ * @param leat_count 剩余匹配数量。
  * @param text 需要匹配的文本字符串。
  * @return 成功返回匹配的评分值，失败返回 -1。
  */
-int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char *text);
-
+int whisper_fuzzy_match(whisper_fuzzy_t* w, size_t leat_count, const char* text);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif //__WHISPER_FUZZY_H__
+#endif  // WHISPER_FUZZY_H_

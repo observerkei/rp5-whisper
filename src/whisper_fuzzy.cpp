@@ -1,11 +1,13 @@
-#include "whisper.h"
-#include "debug.h"
-#include "json.hpp"
+#include "whisper_stream.h"
+
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unordered_map>
-#include "whisper_stream.h"
+
+#include "whisper.h"
+#include "json.hpp"
+#include "debug.h"
 
 using json = nlohmann::json;
 
@@ -244,7 +246,7 @@ void whisper_fuzzy_exit(whisper_fuzzy_t* w)
  * 进行模糊匹配流程。
  *
  * @param w 指向 whisper_fuzzy_t 结构体的指针。
- * @param leat_count 允许的最小匹配字符数。
+ * @param leat_count 剩余匹配数量。
  * @param text 需要匹配的文本字符串。
  * @return 成功返回匹配的评分值，失败返回 -1。
  */
